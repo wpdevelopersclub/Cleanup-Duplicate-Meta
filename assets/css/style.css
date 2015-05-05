@@ -1,0 +1,26 @@
+.cleanup-dup-container{
+    margin: 20px 0;
+    padding: 20px;
+}
+
+table,td,th{
+    border: 1px solid #ccc;
+}
+
+td,th{
+    padding: 10px;
+}
+
+input{
+    margin-bottom: 20px;
+}
+
+.cleanup-dup-container .status{
+    margin-top: 20px;
+}
+
+.cleanup-dup-container .message-cleanup,
+.cleanup-dup-container .message-count{
+    padding: 10px;
+    background-color: #ddd
+}

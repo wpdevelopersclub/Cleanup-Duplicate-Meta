@@ -1,0 +1,13 @@
+{
+  "name": "cleanup-duplicate-meta",
+  "version": "1.0.0",
+  "description": "Deletes duplicate entries in the wp_postmeta and wp_username database tables",
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-concat": "^2.5.2",
+    "gulp-notify": "^2.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-ruby-sass": "^1.0.5",
+    "gulp-uglify": "^1.2.0"
+  }
+}
