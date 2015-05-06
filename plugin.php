@@ -10,7 +10,7 @@
  * Plugin Name: Cleanup Duplicate Meta
  * Plugin URI:  http://wpdevelopersclub.com/wordpress-plugins/cleanup-duplicate-meta/
  * Description: Checks for and deletes duplicate Post and/or User Meta entries in the database tables
- * Version:     1.0.0
+ * Version:     1.0.1
  * Author:      WP Developers Club and Tonya
  * Author URI:  http://wpdevelopersclub.com
  */

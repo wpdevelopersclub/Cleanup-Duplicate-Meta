@@ -32,10 +32,28 @@ class Test_Postmeta_AJAX extends WP_Ajax_UnitTestCase {
 		$this->model = null;
 	}
 
+	function test_check_query_returns_none_found() {
+
+		$this->_setRole( 'administrator' );
+
+		$action             = 'cleanup_dupmeta_query_postmeta';
+		$_POST['security']  = wp_create_nonce( $this->nonce );
+		$_POST['action']    = $action;
+
+		try {
+			$this->_handleAjax( $action );
+		} catch ( WPAjaxDieContinueException $e ) {
+			unset( $e );
+		}
+
+		$this->assertTrue( is_string( $this->_last_response ) );
+		$this->assertEquals( 'No duplicates found', $this->_last_response );
+	}
+
 	function test_check_count_returns_zero_count() {
 		$this->_setRole( 'administrator' );
 
-		$action = 'count_duplicate_postmeta';
+		$action = 'cleanup_dupmeta_count_postmeta';
 
 		$_POST['action']    = $action;
 		$_POST['security']  = wp_create_nonce( $this->nonce );
@@ -57,7 +75,7 @@ class Test_Postmeta_AJAX extends WP_Ajax_UnitTestCase {
 
 		$this->_setRole( 'administrator' );
 
-		$action             = 'count_duplicate_postmeta';
+		$action             = 'cleanup_dupmeta_count_postmeta';
 		$_POST['security']  = wp_create_nonce( $this->nonce );
 		$_POST['action']    = $action;
 
@@ -73,7 +91,7 @@ class Test_Postmeta_AJAX extends WP_Ajax_UnitTestCase {
 	function test_cleanup() {
 		$this->_setRole( 'administrator' );
 
-		$action                 = 'cleanup_duplicate_postmeta';
+		$action                 = 'cleanup_dupmeta_postmeta';
 		$_POST['security']      = wp_create_nonce( $this->nonce );
 		$_POST['action']        = $action;
 		$_POST['keep_first']    = 'first';
@@ -101,7 +119,7 @@ class Test_Postmeta_AJAX extends WP_Ajax_UnitTestCase {
 	function test_cleanup_keep_last() {
 		$this->_setRole( 'administrator' );
 
-		$action                 = 'cleanup_duplicate_postmeta';
+		$action                 = 'cleanup_dupmeta_postmeta';
 		$_POST['security']      = wp_create_nonce( $this->nonce );
 		$_POST['action']        = $action;
 		$_POST['keep_first']    = 'last';

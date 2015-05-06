@@ -4,7 +4,7 @@
  * Model class - models a Post or User Meta
  *
  * @package     Cleanup_Dup_Meta\Models
- * @since       1.0.0
+ * @since       1.0.1
  * @author      WP Developers Club and Tonya
  * @link        http://wpdevelopersclub.com/wordpress-plugins/cleanup-duplicate-meta/
  * @license     GNU General Public License 2.0+
@@ -35,6 +35,13 @@ class Model implements I_Model {
 	protected $nonce = '';
 
 	/**
+	 * AJAX Actions
+	 *
+	 * @var array
+	 */
+	protected $actions = array();
+
+	/**
 	 * Database columns unique to this Model
 	 *
 	 * @var array
@@ -63,6 +70,12 @@ class Model implements I_Model {
 		$this->columns      = $config['columns'];
 		$this->nonce        = '_cleanup_duplicates_' . $config['type'];
 
+		$this->actions      = array(
+			'cleanup'       => 'cleanup_dupmeta_' . $this->type,
+			'count'         => 'cleanup_dupmeta_count_' . $this->type,
+			'query'         => 'cleanup_dupmeta_query_' . $this->type,
+		);
+
 		$this->init_hooks();
 	}
 
@@ -70,8 +83,9 @@ class Model implements I_Model {
 	 * Initialize the hooks
 	 */
 	protected function init_hooks() {
-		add_action( "wp_ajax_cleanup_duplicate_{$this->type}",  array( $this, 'ajax_cleanup') );
-		add_action( "wp_ajax_count_duplicate_{$this->type}",    array( $this, 'ajax_count') );
+		add_action( "wp_ajax_cleanup_dupmeta_{$this->type}",        array( $this, 'ajax_cleanup') );
+		add_action( "wp_ajax_cleanup_dupmeta_count_{$this->type}",  array( $this, 'ajax_count') );
+		add_action( "wp_ajax_cleanup_dupmeta_query_{$this->type}",  array( $this, 'ajax_query_for_duplicates') );
 	}
 
 	/**
@@ -83,13 +97,13 @@ class Model implements I_Model {
 	 */
 	public function ajax_cleanup() {
 
-		//* nonce check
+		// nonce check
 		check_ajax_referer( $this->nonce, 'security' );
 
 		global $wpdb;
 
-		//* To keep the first record (lowest meta_id), we use MIN;
-		//* else the last record (max meta_id) is kept.
+		// To keep the first record (lowest meta_id), we use MIN;
+		// else the last record (max meta_id) is kept.
 		$q_keep_which = 'first' == $_POST['keep_first'] ? 'MIN' : 'MAX';
 
 		$query_sql = $this->get_cleanup_sql( $q_keep_which );
@@ -114,9 +128,30 @@ class Model implements I_Model {
 
 		$query_sql = $this->get_count_sql();
 
-		$count = $wpdb->get_var( $query_sql );
+		echo $wpdb->get_var( $query_sql );
 
-		echo false === $count ? -1 : $count;
+		wp_die();
+	}
+
+	/**
+	 * Handles the callback from AJAX for fetching all of the duplicates
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return integer   Renders out a table of the duplicates
+	 */
+	public function ajax_query_for_duplicates() {
+		check_ajax_referer( $this->nonce, 'security' );
+
+		global $wpdb;
+
+		$results = $wpdb->get_results( $this->get_duplicates_sql() );
+
+		if ( empty( $results ) ) {
+			_e( 'No duplicates found', 'cleanup_dup_meta' );
+		} else {
+			$this->render( 'duplicates.php', $results );
+		}
 
 		wp_die();
 	}
@@ -126,10 +161,12 @@ class Model implements I_Model {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return void
+	 * @param string    $filename
+	 * @param array     $local_variables
+	 * @return null
 	 */
-	public function render() {
-		include( CLEANUP_DUP_META_PLUGIN_DIR . 'lib/views/meta.php' );
+	public function render( $filename = 'meta.php', $local_variables = array() ) {
+		include( CLEANUP_DUP_META_PLUGIN_DIR . 'lib/views/' . $filename );
 	}
 
 	/*************************
@@ -162,6 +199,17 @@ class Model implements I_Model {
 	}
 
 	/**
+	 * Get the SQL query string for the number of duplicates
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string   Returns the SQL query string
+	 */
+	protected function get_duplicates_sql() {
+		return "SELECT * FROM {$this->tablename}" . $this->get_where_sql( 'MIN', ' ORDER BY meta_key;' );
+	}
+
+	/**
 	 * Get the WHERE SQL query string
 	 *
 	 * @since 1.0.0
@@ -169,9 +217,10 @@ class Model implements I_Model {
 	 * @param string    $q_keep_which   MIN retains the first duplicate record
 	 *                                  (discard all dups); MAX retains the last.
 	 *                                  Default: MAX
+	 * @param string    $suffix         Append the semi-colon to the end.
 	 * @return string                   Returns the WHERE SQL query string
 	 */
-	protected function get_where_sql( $q_keep_which = 'MAX' ) {
+	protected function get_where_sql( $q_keep_which = 'MAX', $suffix = ';' ) {
 		return " WHERE {$this->columns['primary_id']} NOT IN (
 					SELECT *
 					FROM (
@@ -179,7 +228,7 @@ class Model implements I_Model {
 						FROM {$this->tablename}
 						GROUP BY {$this->columns['id']}, meta_key
 					) AS x
-				); ";
+				){$suffix}";
 	}
 
 	/****************************

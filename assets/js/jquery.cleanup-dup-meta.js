@@ -4,7 +4,7 @@
  * Load into cleanupDupMeta namespace
  *
  * @package     Cleanup_Dup_Meta
- * @since       1.0.0
+ * @since       1.0.1
  * @author      WP Developers Club and Tonya
  * @link        http://wpdevelopersclub.com/wordpress-plugins/cleanup-duplicate-meta/
  * @license     GNU General Public License 2.0+
@@ -26,11 +26,13 @@
         cleanupDupMeta.buttons = {
             postmeta : {
                 cleanup   : $('#cleanup-dup-postmeta'),
-                count     : $('#cleanup-dup-postmeta-count')
+                count     : $('#cleanup-dup-postmeta-count'),
+                query     : $('#cleanup-dup-postmeta-query')
             },
             usermeta : {
                 cleanup   : $('#cleanup-dup-usermeta'),
-                count     : $('#cleanup-dup-usermeta-count')
+                count     : $('#cleanup-dup-usermeta-count'),
+                query     : $('#cleanup-dup-usermeta-query')
             }
         }
         cleanupDupMeta.loadingImgs = {
@@ -61,11 +63,11 @@
                 $button.data( '_cleanup_dups_meta', {
                     type        : type,
                     buttonType  : buttonType,
-                    data        : _buildData( type, buttonType + '_duplicate_' + type ),
+                    data        : _buildData( type, $button.data( 'action' ) ),
                     isUserMeta  : 'usermeta' === type ? true : false
                 });
 
-                //* Now bind
+                // Now bind
                 _bindOnClick( $button, this );
             });
         });
@@ -108,11 +110,11 @@
      */
     function _triggerAjax( event ) {
 
-        var _data       = $(this).data( '_cleanup_dups_meta');
+        var _data           = $(this).data( '_cleanup_dups_meta');
 
-        _data.isUserMeta = true === _data.isUserMeta ? true : false;
+        _data.isUserMeta    = true === _data.isUserMeta ? true : false;
 
-        //* Check first/last radio buttons
+        // Check first/last radio buttons
         _data.data.keep_first = cleanupDupMeta.containers[ _data.type ].find( 'input[name=cleanup-dup-meta-keep]:checked' ).val();
 
         _ajaxHandler( $(this), _data );
@@ -137,7 +139,7 @@
      */
     function _ajaxHandler( $button, _data ) {
 
-        var $message = cleanupDupMeta.containers[ _data.type ].find( '.message-' + _data.buttonType );
+        var $message = cleanupDupMeta.containers[ _data.type ].find( '.message-' + _data.buttonType);
 
         $.ajax({
             type: 'POST',
@@ -150,8 +152,13 @@
             }
         })
         .done(function( response ) {
-            $message.find('span').text( response );
-            $message.show();
+            if ( 'query' == _data.buttonType ) {
+                //console.log( response );
+                $message.html( response );
+            } else {
+                $message.find('span').text(response);
+                $message.show();
+            }
         })
         .fail(function( XMLHttpRequest, textStatus, errorThrown ) {
             $message.hide();
@@ -256,7 +263,7 @@
             .prop( 'readonly', false )
             .removeAttr( 'style' );
 
-        //* Release memory
+        // Release memory
         $button = null;
 
         return false;

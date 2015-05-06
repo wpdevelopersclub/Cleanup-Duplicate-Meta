@@ -6,7 +6,7 @@
  * This class is the controller for the plugin, directly traffic, creating the admin menu, etc.
  *
  * @package     Cleanup_Dup_Meta
- * @since       1.0.0
+ * @since       1.0.1
  * @author      WP Developers Club and Tonya
  * @link        http://wpdevelopersclub.com/wordpress-plugins/cleanup-duplicate-meta/
  * @license     GNU General Public License 2.0+
@@ -27,7 +27,7 @@ class Plugin {
 	 *
 	 * @var string
 	 */
-	const VERSION = '1.0.0';
+	const VERSION = '1.0.1';
 
 	/**
 	 * The plugin's minimum WordPress requirement
@@ -168,7 +168,7 @@ class Plugin {
 			true
 		);
 
-		//* Pass some parameters to javascript
+		// Pass some parameters to javascript
 		$params = array(
 			'ajaxurl'   => admin_url('admin-ajax.php'),
 		);
