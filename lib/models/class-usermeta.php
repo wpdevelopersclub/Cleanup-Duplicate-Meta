@@ -14,6 +14,13 @@
 class User_Meta extends Model {
 
 	/**
+	 * Db Table to be cleaned (minus the prefix)
+	 *
+	 * @var string
+	 */
+	protected $table = 'usermeta';
+
+	/**
 	 * Get the SQL query string for the postmeta
 	 *
 	 * @since 1.0.0

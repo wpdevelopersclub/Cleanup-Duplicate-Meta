@@ -1,13 +1,13 @@
 <hr>
 
-<div class="cleanup-dup-<?php esc_attr_e( $this->config['table'] ); ?>-container cleanup-dup-container">
+<div class="cleanup-dup-<?php esc_attr_e( $this->table ); ?>-container cleanup-dup-container">
 
 	<h3><?php esc_html_e( $this->config['labels']['title'] ); ?></h3>
 	<p>
 		<?php esc_html_e( $this->config['labels']['explanation'] ); ?>
 	</p>
 
-	<form id="cleanup-dup-<?php esc_attr_e( $this->config['table'] ); ?>-form" method="post" action="">
+	<form id="cleanup-dup-<?php esc_attr_e( $this->table ); ?>-form" method="post" action="">
 
 		<?php wp_nonce_field( esc_attr( $this->config['nonce'] ) ); ?>
 
@@ -23,7 +23,7 @@
 			<input type="text" id="<?php esc_attr_e( $this->config['ids']['count_button'] ); ?>" name="cleanup-dup-meta-count" class="button hide-if-no-js" value="<?php esc_html_e( $this->config['labels']['count_button'] ); ?>">
 		</p>
 		<footer class="status">
-			<img src="<?php echo esc_url( $this->config['loading_image']['src'] ); ?>" width="<?php esc_attr_e( $this->config['loading_image']['width'] ); ?>" height="<?php esc_attr_e( $this->config['loading_image']['height'] ); ?>"  style="display: none;" />
+			<img src="<?php echo esc_url( CLEANUP_DUP_META_PLUGIN_URL . 'assets/images/ajax-loader.gif' ); ?>" width="128" height="15"  style="display: none;" />
 			<p class="message-count" style="display: none;">
 				<span>0</span> <?php esc_html_e( $this->config['labels']['check_count'] ); ?>
 			</p>

@@ -2,15 +2,8 @@
 global $wpdb;
 
 return array(
-	'table'                 => 'postmeta',
 
 	'view'                  => CLEANUP_DUP_META_PLUGIN_DIR . 'lib/views/meta.php',
-
-	'loading_image'         => array(
-		'src'               => CLEANUP_DUP_META_PLUGIN_URL . 'assets/images/ajax-loader.gif',
-		'width'             => 128,
-		'height'            => 15,
-	),
 
 	'nonce'                 => '_cleanup_duplicate_postmeta',
 

@@ -18,7 +18,7 @@ abstract class Model implements I_Model {
 	 *
 	 * @var string
 	 */
-	protected $table = 'postmeta';
+	protected $table = '';
 
 	/**
 	 * Configuration array
@@ -36,8 +36,7 @@ abstract class Model implements I_Model {
 	 * @return self
 	 */
 	public function __construct( $config = array() ) {
-		$this->config   = $config;
-		$this->table    = $config['table'];
+		$this->config = $config;
 
 		$this->init_hooks();
 	}
@@ -60,22 +59,19 @@ abstract class Model implements I_Model {
 	public function ajax_cleanup() {
 
 		//* nonce check
-		check_admin_referer( $this->config['nonce'], 'security' );
+		check_ajax_referer( $this->config['nonce'], 'security' );
 
 		global $wpdb;
 
 		//* To keep the first record (lowest meta_id), we use MIN;
 		//* else the last record (max meta_id) is kept.
-		$q_keep_which = 'first' == $_REQUEST['keep_first'] ? 'MIN' : 'MAX';
+		$q_keep_which = 'first' == $_POST['keep_first'] ? 'MIN' : 'MAX';
 
 		$query_sql = $this->get_cleanup_sql( $q_keep_which );
 
 		echo $wpdb->query( $query_sql );
 
-		//* Check if doing AJAX, which makes it testable
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			die();
-		}
+		wp_die();
 	}
 
 	/**
@@ -87,7 +83,7 @@ abstract class Model implements I_Model {
 	 */
 	public function ajax_count() {
 
-		check_admin_referer( $this->config['nonce'], 'security' );
+		check_ajax_referer( $this->config['nonce'], 'security' );
 
 		global $wpdb;
 
@@ -97,10 +93,7 @@ abstract class Model implements I_Model {
 
 		echo false === $count ? -1 : $count;
 
-		//* Check if doing AJAX, which makes it testable
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			die();
-		}
+		wp_die();
 	}
 
 	/**

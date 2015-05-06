@@ -3,7 +3,7 @@
 use Cleanup_Dup_Meta\Tests\Plugin_UnitTestCase;
 use Cleanup_Dup_Meta\Models\User_Meta;
 
-class Test_Usermeta extends Plugin_UnitTestCase {
+class Test_Usermeta_Model extends Plugin_UnitTestCase {
 
 	protected $model;
 
@@ -24,109 +24,8 @@ class Test_Usermeta extends Plugin_UnitTestCase {
 
 		$this->assertTrue( is_array( $config ) );
 		$this->assertNotEmpty( $config );
-		$this->assertEquals( 'usermeta', $config['table'] );
 		$this->assertEquals( '_cleanup_duplicate_usermeta', $config['nonce'] );
 
 		$this->assertEquals( 'usermeta', $this->model->get( 'table' ) );
-	}
-
-	function test_ajax_error_for_nonce() {
-		$this->setExpectedException( 'WPDieException' );
-		$this->model->ajax_count();
-	}
-
-	function test_check_count_returns_0() {
-		$config = $this->model->get( 'config' );
-		$_REQUEST = array (
-			'security' => wp_create_nonce( $config['nonce'] ),
-		);
-
-		ob_start();
-		$this->model->ajax_count();
-
-		$this->assertEquals( 0, ob_get_clean() );
-	}
-
-	function test_check_count() {
-
-		$this->insert_duplicates( 3 );
-
-		$config = $this->model->get( 'config' );
-		$_REQUEST = array (
-			'security' => wp_create_nonce( $config['nonce'] ),
-		);
-
-		ob_start();
-		$this->model->ajax_count();
-
-		$this->assertEquals( 2, ob_get_clean() );
-	}
-
-	function test_cleanup() {
-		$config = $this->model->get( 'config' );
-		$_REQUEST = array (
-			'security'      => wp_create_nonce( $config['nonce'] ),
-			'keep_first'    => 'first',
-		);
-
-		ob_start();
-		$this->model->ajax_cleanup();
-		$this->assertEquals( 0, ob_get_clean() );
-
-		$this->insert_duplicates( 3 );
-
-		ob_start();
-		$this->model->ajax_cleanup();
-		$this->assertEquals( 2, ob_get_clean() );
-		$this->assertEquals( 1, get_user_meta( 1, '_foo', true ) );
-
-		$_REQUEST = array (
-			'security'      => wp_create_nonce( $config['nonce'] ),
-			'keep_first'    => 'first',
-		);
-	}
-
-	function test_cleanup_keep_last() {
-		$config = $this->model->get( 'config' );
-		$_REQUEST = array (
-			'security'      => wp_create_nonce( $config['nonce'] ),
-			'keep_first'    => '',
-		);
-
-		$this->insert_duplicates( 3 );
-
-		ob_start();
-		$this->model->ajax_cleanup();
-		$this->assertEquals( 2, ob_get_clean() );
-		$this->assertEquals( 3, get_user_meta( 1, '_foo', true ) );
-	}
-
-
-	/*****************
-	 * Helpers
-	 ****************/
-
-	/**
-	 * Insert duplicates into the Post Meta table
-	 *
-	 * @param int $num_dups
-	 */
-	protected function insert_duplicates( $num_dups = 2 ) {
-		global $wpdb;
-		for( $num = 0; $num < $num_dups; $num++ ) {
-			$wpdb->insert(
-				$wpdb->usermeta,
-				array(
-					'user_id'       => 1,
-					'meta_key'      => '_foo',
-					'meta_value'    => $num + 1,
-				),
-				array(
-					'%d',
-					'%s',
-					'%s'
-				)
-			);
-		}
 	}
 }
