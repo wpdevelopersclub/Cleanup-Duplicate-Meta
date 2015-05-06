@@ -38,8 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once( __DIR__ . '/assets/vendor/autoload.php' );
 
-use Cleanup_Dup_Meta\Models\Post_Meta;
-use Cleanup_Dup_Meta\Models\User_Meta;
+use Cleanup_Dup_Meta\Models\Model;
 
 define( 'CLEANUP_DUP_META_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CLEANUP_DUP_META_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -59,8 +58,8 @@ if ( version_compare( $GLOBALS['wp_version'], Plugin::MIN_WP_VERSION, '>' ) ) {
 
 		new Plugin(
 			include( CLEANUP_DUP_META_PLUGIN_DIR . 'lib/config/plugin.php' ),
-			new Post_Meta( include( CLEANUP_DUP_META_PLUGIN_DIR . 'lib/config/postmeta.php' ) ),
-			new User_Meta( include( CLEANUP_DUP_META_PLUGIN_DIR . 'lib/config/usermeta.php' ) )
+			new Model( include( CLEANUP_DUP_META_PLUGIN_DIR . 'lib/config/postmeta.php' ) ),
+			new Model( include( CLEANUP_DUP_META_PLUGIN_DIR . 'lib/config/usermeta.php' ) )
 		);
 	}
 }

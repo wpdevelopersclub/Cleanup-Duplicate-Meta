@@ -1,13 +1,13 @@
 <hr>
 
-<div class="cleanup-dup-<?php esc_attr_e( $this->table ); ?>-container cleanup-dup-container">
+<div class="cleanup-dup-<?php esc_attr_e( $this->type ); ?>-container cleanup-dup-container">
 
 	<h3><?php esc_html_e( $this->config['labels']['title'] ); ?></h3>
 	<p>
 		<?php esc_html_e( $this->config['labels']['explanation'] ); ?>
 	</p>
 
-	<form id="cleanup-dup-<?php esc_attr_e( $this->table ); ?>-form" method="post" action="">
+	<form id="cleanup-dup-<?php esc_attr_e( $this->type ); ?>-form" method="post" action="">
 
 		<?php wp_nonce_field( esc_attr( $this->config['nonce'] ) ); ?>
 

@@ -6,7 +6,7 @@
 require_once( ABSPATH . 'wp-admin/includes/ajax-actions.php' );
 
 use WP_Ajax_UnitTestCase;
-use Cleanup_Dup_Meta\Models\User_Meta;
+use Cleanup_Dup_Meta\Models\Model;
 use WPAjaxDieContinueException;
 
 /**
@@ -21,7 +21,7 @@ class Test_Usermeta_AJAX extends WP_Ajax_UnitTestCase {
 	function setUp() {
 		parent::setUp();
 
-		$this->model = new User_Meta( include( CLEANUP_DUP_META_TESTS_DIR . '../lib/config/usermeta.php' ) );
+		$this->model = new Model( include( CLEANUP_DUP_META_TESTS_DIR . '../lib/config/usermeta.php' ) );
 	}
 
 	function tearDown() {

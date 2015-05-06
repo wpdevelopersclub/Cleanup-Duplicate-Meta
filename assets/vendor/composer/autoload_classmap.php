@@ -8,7 +8,5 @@ $baseDir = dirname(dirname($vendorDir));
 return array(
     'Cleanup_Dup_Meta\\Models\\I_Model' => $baseDir . '/lib/models/i-model.php',
     'Cleanup_Dup_Meta\\Models\\Model' => $baseDir . '/lib/models/class-model.php',
-    'Cleanup_Dup_Meta\\Models\\Post_Meta' => $baseDir . '/lib/models/class-postmeta.php',
-    'Cleanup_Dup_Meta\\Models\\User_Meta' => $baseDir . '/lib/models/class-usermeta.php',
     'Cleanup_Dup_Meta\\Plugin' => $baseDir . '/class-plugin.php',
 );

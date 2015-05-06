@@ -11,14 +11,28 @@
  * @copyright   2015 WP Developers Club
  */
 
-abstract class Model implements I_Model {
+class Model implements I_Model {
 
 	/**
 	 * Db Table to be cleaned (minus the prefix)
 	 *
 	 * @var string
 	 */
-	protected $table = '';
+	protected $type = '';
+
+	/**
+	 * Db Table to be cleaned
+	 *
+	 * @var string
+	 */
+	protected $tablename = '';
+
+	/**
+	 * Database columns unique to this Model
+	 *
+	 * @var array
+	 */
+	protected $columns = array();
 
 	/**
 	 * Configuration array
@@ -36,7 +50,10 @@ abstract class Model implements I_Model {
 	 * @return self
 	 */
 	public function __construct( $config = array() ) {
-		$this->config = $config;
+		$this->config       = $config;
+		$this->type         = $config['type'];
+		$this->tablename    = $config['tablename'];
+		$this->columns      = $config['columns'];
 
 		$this->init_hooks();
 	}
@@ -45,8 +62,8 @@ abstract class Model implements I_Model {
 	 * Initialize the hooks
 	 */
 	protected function init_hooks() {
-		add_action( "wp_ajax_cleanup_duplicate_{$this->table}", array( $this, 'ajax_cleanup') );
-		add_action( "wp_ajax_count_duplicate_{$this->table}",   array( $this, 'ajax_count') );
+		add_action( "wp_ajax_cleanup_duplicate_{$this->type}",  array( $this, 'ajax_cleanup') );
+		add_action( "wp_ajax_count_duplicate_{$this->type}",    array( $this, 'ajax_count') );
 	}
 
 	/**
@@ -112,15 +129,18 @@ abstract class Model implements I_Model {
 	 ************************/
 
 	/**
-	 * Get the SQL query string for the postmeta
+	 * Get the SQL query string for cleanup
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param bool      $q_keep_which   Flag to set retaining the
-	 *                                  first duplicate record (discard all dups)
+	 * @param string    $q_keep_which   MIN retains the first duplicate record
+	 *                                  (discard all dups); MAX retains the last.
+	 *                                  Default: MAX
 	 * @return string                   Returns the SQL query string
 	 */
-	abstract protected function get_cleanup_sql( $q_keep_which = false  );
+	protected function get_cleanup_sql( $q_keep_which = 'MAX' ) {
+		return	"DELETE FROM {$this->tablename}" . $this->get_where_sql( $q_keep_which );
+	}
 
 	/**
 	 * Get the SQL query string for the number of duplicates
@@ -129,7 +149,30 @@ abstract class Model implements I_Model {
 	 *
 	 * @return string   Returns the SQL query string
 	 */
-	abstract protected function get_count_sql();
+	protected function get_count_sql() {
+		return	"SELECT COUNT(*) FROM {$this->tablename}" . $this->get_where_sql( 'MIN' );
+	}
+
+	/**
+	 * Get the WHERE SQL query string
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string    $q_keep_which   MIN retains the first duplicate record
+	 *                                  (discard all dups); MAX retains the last.
+	 *                                  Default: MAX
+	 * @return string                   Returns the WHERE SQL query string
+	 */
+	protected function get_where_sql( $q_keep_which = 'MAX' ) {
+		return " WHERE {$this->columns['primary_id']} NOT IN (
+					SELECT *
+					FROM (
+						SELECT {$q_keep_which}({$this->columns['primary_id']})
+						FROM {$this->tablename}
+						GROUP BY {$this->columns['id']}, meta_key
+					) AS x
+				); ";
+	}
 
 	/****************************
 	 * Getters
@@ -144,7 +187,7 @@ abstract class Model implements I_Model {
 	 * @return mixed
 	 */
 	public function __get( $property ) {
-		return $this->get_property( $property );
+		return $this->get( $property );
 	}
 
 	/**

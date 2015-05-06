@@ -1,5 +1,7 @@
 # Cleanup Duplicate Meta
 
+[![Code Climate](https://codeclimate.com/github/wpdevelopersclub/Cleanup-Duplicate-Meta/badges/gpa.svg)](https://codeclimate.com/github/wpdevelopersclub/Cleanup-Duplicate-Meta)
+
 WordPress Plugin that checks for and/or deletes duplicate Post and/or User Meta entries in the database tables
 
 __Contributors:__ [Tonya](https://github.com/hellofromtonya)  

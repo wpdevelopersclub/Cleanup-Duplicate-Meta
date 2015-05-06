@@ -3,6 +3,14 @@ global $wpdb;
 
 return array(
 
+	'type'                  => 'postmeta',
+	'tablename'             => $wpdb->postmeta,
+
+	'columns'               => array(
+		'primary_id'        => 'meta_id',
+		'id'                => 'post_id',
+	),
+
 	'view'                  => CLEANUP_DUP_META_PLUGIN_DIR . 'lib/views/meta.php',
 
 	'nonce'                 => '_cleanup_duplicate_postmeta',

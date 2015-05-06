@@ -1,9 +1,9 @@
 {
-    "name" 			: "hellofromtonya/cleanup-duplicate-meta",
-    "description" 	: "Deletes duplicate entries in the wp_postmeta and wp_usermeta database tables",
+    "name" 			: "wpdevelopersclub/cleanup-duplicate-meta",
+    "description" 	: "Checks for and deletes duplicate Post and/or User Meta entries in the database tables",
     "type"          : "project",
     "keywords" 		: ["wordpress", "wp", "plugin"],
-    "homepage" 		: "https://github.com/hellofromtonya/Cleanup-Duplicate-Meta",
+    "homepage" 		: "http://wpdevelopersclub.com/wordpress-plugins/cleanup-duplicate-meta/",
     "license" 		: "GPL-2.0+",
     "authors": [
         {
@@ -19,9 +19,7 @@
             "class-plugin.php",
 
             "lib/models/i-model.php",
-            "lib/models/class-model.php",
-            "lib/models/class-postmeta.php",
-            "lib/models/class-usermeta.php"
+            "lib/models/class-model.php"
         ],
         "files": []
     },

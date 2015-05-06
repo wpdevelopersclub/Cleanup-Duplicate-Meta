@@ -1,7 +1,7 @@
 <?php namespace Cleanup_Dup_Meta\Tests\Models;
 
 use Cleanup_Dup_Meta\Tests\Plugin_UnitTestCase;
-use Cleanup_Dup_Meta\Models\Post_Meta;
+use Cleanup_Dup_Meta\Models\Model;
 
 class Test_Postmeta extends Plugin_UnitTestCase {
 
@@ -10,7 +10,7 @@ class Test_Postmeta extends Plugin_UnitTestCase {
 	function setUp() {
 		parent::setUp();
 
-		$this->model = new Post_Meta( include( CLEANUP_DUP_META_TESTS_DIR . '../lib/config/postmeta.php' ) );
+		$this->model = new Model( include( CLEANUP_DUP_META_TESTS_DIR . '../lib/config/postmeta.php' ) );
 	}
 
 	function tearDown() {
@@ -24,6 +24,9 @@ class Test_Postmeta extends Plugin_UnitTestCase {
 
 		$this->assertTrue( is_array( $config ) );
 		$this->assertNotEmpty( $config );
-		$this->assertEquals( '_cleanup_duplicate_postmeta', $config['nonce'] );
+		$this->assertEquals('postmeta', $config['type'] );
+		$this->assertEquals('_cleanup_duplicate_postmeta', $config['nonce'] );
+
+		$this->assertEquals( 'postmeta', $this->model->get( 'type' ) );
 	}
 }

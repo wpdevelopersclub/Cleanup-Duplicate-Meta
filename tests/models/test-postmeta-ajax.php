@@ -6,7 +6,7 @@
 require_once( ABSPATH . 'wp-admin/includes/ajax-actions.php' );
 
 use WP_Ajax_UnitTestCase;
-use Cleanup_Dup_Meta\Models\Post_Meta;
+use Cleanup_Dup_Meta\Models\Model;
 use WPAjaxDieContinueException;
 
 /**
@@ -21,7 +21,7 @@ class Test_Postmeta_AJAX extends WP_Ajax_UnitTestCase {
 	function setUp() {
 		parent::setUp();
 
-		$this->model = new Post_Meta( include( CLEANUP_DUP_META_TESTS_DIR . '../lib/config/postmeta.php' ) );
+		$this->model = new Model( include( CLEANUP_DUP_META_TESTS_DIR . '../lib/config/postmeta.php' ) );
 	}
 
 	function tearDown() {
