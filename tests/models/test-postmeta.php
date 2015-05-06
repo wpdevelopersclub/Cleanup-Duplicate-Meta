@@ -24,9 +24,14 @@ class Test_Postmeta extends Plugin_UnitTestCase {
 
 		$this->assertTrue( is_array( $config ) );
 		$this->assertNotEmpty( $config );
-		$this->assertEquals('postmeta', $config['type'] );
-		$this->assertEquals('_cleanup_duplicate_postmeta', $config['nonce'] );
+	}
 
+	function test_getter() {
 		$this->assertEquals( 'postmeta', $this->model->get( 'type' ) );
+		$this->assertEquals( '_cleanup_duplicates_postmeta', $this->model->get( 'nonce' ) );
+		$this->assertEquals( array(
+			'primary_id'        => 'meta_id',
+			'id'                => 'post_id',
+		), $this->model->get( 'columns' ) );
 	}
 }

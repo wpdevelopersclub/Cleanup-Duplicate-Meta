@@ -1,27 +1,25 @@
 <?php
 global $wpdb;
 
+$type = 'postmeta';
+
 return array(
 
-	'type'                  => 'postmeta',
-	'tablename'             => $wpdb->postmeta,
+	'type'                  => $type,
+	'tablename'             => $wpdb->$type,
 
 	'columns'               => array(
 		'primary_id'        => 'meta_id',
 		'id'                => 'post_id',
 	),
 
-	'view'                  => CLEANUP_DUP_META_PLUGIN_DIR . 'lib/views/meta.php',
-
-	'nonce'                 => '_cleanup_duplicate_postmeta',
-
 	'labels'                => array(
 		'title'             => __( 'Cleanup Post Meta', 'cleanup_dup_meta' ),
 		'explanation'       => __( 'You are able to Check for Post Meta Duplicates and/or Cleanup any found duplicates.', 'cleanup_dup_meta' ),
 		'cleanup_button'    => __( 'Cleanup Post Meta', 'cleanup_dup_meta' ),
 		'count_button'      => __( 'Check for Duplicates', 'cleanup_dup_meta' ),
-		'check_count'       => __( "Duplicate records found in the {$wpdb->postmeta} database table", 'cleanup_dup_meta' ),
-		'cleanup_count'     => __( "Duplicate records cleaned in the {$wpdb->postmeta} database table", 'cleanup_dup_meta' ),
+		'check_count'       => __( "Duplicate records found in the {$wpdb->$type} database table", 'cleanup_dup_meta' ),
+		'cleanup_count'     => __( "Duplicate records cleaned in the {$wpdb->$type} database table", 'cleanup_dup_meta' ),
 	),
 
 	'ids'                   => array(

@@ -28,6 +28,13 @@ class Model implements I_Model {
 	protected $tablename = '';
 
 	/**
+	 * Security nonce action
+	 *
+	 * @var string
+	 */
+	protected $nonce = '';
+
+	/**
 	 * Database columns unique to this Model
 	 *
 	 * @var array
@@ -54,6 +61,7 @@ class Model implements I_Model {
 		$this->type         = $config['type'];
 		$this->tablename    = $config['tablename'];
 		$this->columns      = $config['columns'];
+		$this->nonce        = '_cleanup_duplicates_' . $config['type'];
 
 		$this->init_hooks();
 	}
@@ -76,7 +84,7 @@ class Model implements I_Model {
 	public function ajax_cleanup() {
 
 		//* nonce check
-		check_ajax_referer( $this->config['nonce'], 'security' );
+		check_ajax_referer( $this->nonce, 'security' );
 
 		global $wpdb;
 
@@ -100,7 +108,7 @@ class Model implements I_Model {
 	 */
 	public function ajax_count() {
 
-		check_ajax_referer( $this->config['nonce'], 'security' );
+		check_ajax_referer( $this->nonce, 'security' );
 
 		global $wpdb;
 
@@ -121,7 +129,7 @@ class Model implements I_Model {
 	 * @return void
 	 */
 	public function render() {
-		include( $this->config['view'] );
+		include( CLEANUP_DUP_META_PLUGIN_DIR . 'lib/views/meta.php' );
 	}
 
 	/*************************

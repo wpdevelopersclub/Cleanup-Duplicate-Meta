@@ -17,11 +17,13 @@ use WPAjaxDieContinueException;
 class Test_Usermeta_AJAX extends WP_Ajax_UnitTestCase {
 
 	protected $model;
+	protected $nonce;
 
 	function setUp() {
 		parent::setUp();
 
 		$this->model = new Model( include( CLEANUP_DUP_META_TESTS_DIR . '../lib/config/usermeta.php' ) );
+		$this->nonce = $this->model->get( 'nonce' );
 	}
 
 	function tearDown() {
@@ -36,8 +38,7 @@ class Test_Usermeta_AJAX extends WP_Ajax_UnitTestCase {
 		$action = 'count_duplicate_usermeta';
 
 		$_POST['action']    = $action;
-		$config = $this->model->get( 'config' );
-		$_POST['security']  = wp_create_nonce( $config['nonce'] );
+		$_POST['security']  = wp_create_nonce( $this->nonce );
 
 		try {
 			$this->_handleAjax( $action );
@@ -56,10 +57,9 @@ class Test_Usermeta_AJAX extends WP_Ajax_UnitTestCase {
 
 		$this->_setRole( 'administrator' );
 
-		$action = 'count_duplicate_usermeta';
-		$config = $this->model->get( 'config' );
-		$_POST['security']  = wp_create_nonce( $config['nonce'] );
-		$_POST['action']        = $action;
+		$action             = 'count_duplicate_usermeta';
+		$_POST['security']  = wp_create_nonce( $this->nonce );
+		$_POST['action']    = $action;
 
 		try {
 			$this->_handleAjax( $action );
@@ -73,10 +73,8 @@ class Test_Usermeta_AJAX extends WP_Ajax_UnitTestCase {
 	function test_cleanup() {
 		$this->_setRole( 'administrator' );
 
-		$action = 'cleanup_duplicate_usermeta';
-		$config = $this->model->get( 'config' );
-
-		$_POST['security']      = wp_create_nonce( $config['nonce'] );
+		$action                 = 'cleanup_duplicate_usermeta';
+		$_POST['security']      = wp_create_nonce( $this->nonce );
 		$_POST['action']        = $action;
 		$_POST['keep_first']    = 'first';
 
@@ -103,10 +101,8 @@ class Test_Usermeta_AJAX extends WP_Ajax_UnitTestCase {
 	function test_cleanup_keep_last() {
 		$this->_setRole( 'administrator' );
 
-		$action = 'cleanup_duplicate_usermeta';
-		$config = $this->model->get( 'config' );
-
-		$_POST['security']      = wp_create_nonce( $config['nonce'] );
+		$action                 = 'cleanup_duplicate_usermeta';
+		$_POST['security']      = wp_create_nonce( $this->nonce );
 		$_POST['action']        = $action;
 		$_POST['keep_first']    = 'last';
 

@@ -9,7 +9,7 @@
 
 	<form id="cleanup-dup-<?php esc_attr_e( $this->type ); ?>-form" method="post" action="">
 
-		<?php wp_nonce_field( esc_attr( $this->config['nonce'] ) ); ?>
+		<?php wp_nonce_field( esc_attr( $this->nonce ) ); ?>
 
 		<p>
 			<input type="radio" name="cleanup-dup-meta-keep" value="first"><?php _e( 'Keep the first duplicate meta', 'cleanup_dup_meta' ); ?>

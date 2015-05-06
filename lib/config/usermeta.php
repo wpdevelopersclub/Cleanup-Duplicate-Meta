@@ -1,17 +1,17 @@
 <?php
 global $wpdb;
 
+$type = 'usermeta';
+
 return array(
 
-	'type'                  => 'usermeta',
-	'tablename'             => $wpdb->usermeta,
+	'type'                  => $type,
+	'tablename'             => $wpdb->$type,
 
 	'columns'               => array(
 		'primary_id'        => 'umeta_id',
 		'id'                => 'user_id',
 	),
-
-	'view'                  => CLEANUP_DUP_META_PLUGIN_DIR . 'lib/views/meta.php',
 
 	'nonce'                 => '_cleanup_duplicate_usermeta',
 
@@ -20,8 +20,8 @@ return array(
 		'explanation'       => __( 'You are able to Check for User Meta Duplicates and/or Cleanup any found duplicates.', 'cleanup_dup_meta' ),
 		'cleanup_button'    => __( 'Cleanup User Meta', 'cleanup_dup_meta' ),
 		'count_button'      => __( 'Check for Duplicates', 'cleanup_dup_meta' ),
-		'check_count'       => __( "Duplicate records found in the {$wpdb->postmeta} database table", 'cleanup_dup_meta' ),
-		'cleanup_count'     => __( "Duplicate records cleaned in the {$wpdb->postmeta} database table", 'cleanup_dup_meta' ),
+		'check_count'       => __( "Duplicate records found in the {$wpdb->$type} database table", 'cleanup_dup_meta' ),
+		'cleanup_count'     => __( "Duplicate records cleaned in the {$wpdb->$type} database table", 'cleanup_dup_meta' ),
 	),
 
 	'ids'                   => array(

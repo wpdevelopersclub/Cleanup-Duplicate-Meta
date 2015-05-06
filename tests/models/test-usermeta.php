@@ -24,9 +24,14 @@ class Test_Usermeta_Model extends Plugin_UnitTestCase {
 
 		$this->assertTrue( is_array( $config ) );
 		$this->assertNotEmpty( $config );
-		$this->assertEquals( 'usermeta', $config['type'] );
-		$this->assertEquals( '_cleanup_duplicate_usermeta', $config['nonce'] );
+	}
 
+	function test_getter() {
 		$this->assertEquals( 'usermeta', $this->model->get( 'type' ) );
+		$this->assertEquals( '_cleanup_duplicates_usermeta', $this->model->get( 'nonce' ) );
+		$this->assertEquals( array(
+			'primary_id'        => 'umeta_id',
+			'id'                => 'user_id',
+		), $this->model->get( 'columns' ) );
 	}
 }
