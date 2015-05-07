@@ -1,7 +1,7 @@
 === Cleanup Duplicate Meta ===
 Contributors: WPDevelopersClub, hellofromTonya
 Tags: meta, post meta, user meta, duplicate meta, database cleanup, cleanup, clean up, database
-Requires at least: 3.3
+Requires at least: 3.5
 Tested up to: 4.2.1
 Stable tag: 1.0.1
 License: GPLv2 or later

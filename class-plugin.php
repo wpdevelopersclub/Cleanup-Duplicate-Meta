@@ -35,7 +35,7 @@ class Plugin {
 	 *
 	 * @var string
 	 */
-	const MIN_WP_VERSION = '3.2';
+	const MIN_WP_VERSION = '3.5';
 
 	/**
 	 * Configuration array
