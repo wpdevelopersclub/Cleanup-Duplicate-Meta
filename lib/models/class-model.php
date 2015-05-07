@@ -5,7 +5,7 @@
  *
  * @package     Cleanup_Dup_Meta\Models
  * @since       1.0.1
- * @author      WP Developers Club and Tonya
+ * @author      WPDevelopersClub and hellofromTonya
  * @link        http://wpdevelopersclub.com/wordpress-plugins/cleanup-duplicate-meta/
  * @license     GNU General Public License 2.0+
  * @copyright   2015 WP Developers Club
@@ -83,9 +83,9 @@ class Model implements I_Model {
 	 * Initialize the hooks
 	 */
 	protected function init_hooks() {
-		add_action( "wp_ajax_cleanup_dupmeta_{$this->type}",        array( $this, 'ajax_cleanup') );
-		add_action( "wp_ajax_cleanup_dupmeta_count_{$this->type}",  array( $this, 'ajax_count') );
-		add_action( "wp_ajax_cleanup_dupmeta_query_{$this->type}",  array( $this, 'ajax_query_for_duplicates') );
+		add_action( "wp_ajax_cleanup_dupmeta_{$this->type}",        array( $this, 'ajax_cleanup' ) );
+		add_action( "wp_ajax_cleanup_dupmeta_count_{$this->type}",  array( $this, 'ajax_count' ) );
+		add_action( "wp_ajax_cleanup_dupmeta_query_{$this->type}",  array( $this, 'ajax_query_for_duplicates' ) );
 	}
 
 	/**
@@ -104,11 +104,14 @@ class Model implements I_Model {
 
 		// To keep the first record (lowest meta_id), we use MIN;
 		// else the last record (max meta_id) is kept.
-		$q_keep_which = 'first' == $_POST['keep_first'] ? 'MIN' : 'MAX';
+		$keep_first = array_key_exists( 'keep_first', (array) $_POST ) ? esc_attr( $_POST['keep_first'] ) : '';
+		$q_keep_which = $keep_first && 'first' === $keep_first ? 'MIN' : 'MAX';
 
 		$query_sql = $this->get_cleanup_sql( $q_keep_which );
 
-		echo $wpdb->query( $query_sql );
+		$results = $wpdb->query( $query_sql );
+
+		esc_html_e( $results );
 
 		wp_die();
 	}
@@ -126,9 +129,9 @@ class Model implements I_Model {
 
 		global $wpdb;
 
-		$query_sql = $this->get_count_sql();
+		$results = $wpdb->get_var( $this->get_count_sql() );
 
-		echo $wpdb->get_var( $query_sql );
+		esc_html_e( $results );
 
 		wp_die();
 	}
@@ -166,6 +169,7 @@ class Model implements I_Model {
 	 * @return null
 	 */
 	public function render( $filename = 'meta.php', $local_variables = array() ) {
+		/** @noinspection PhpIncludeInspection */
 		include( CLEANUP_DUP_META_PLUGIN_DIR . 'lib/views/' . $filename );
 	}
 
@@ -184,7 +188,7 @@ class Model implements I_Model {
 	 * @return string                   Returns the SQL query string
 	 */
 	protected function get_cleanup_sql( $q_keep_which = 'MAX' ) {
-		return	"DELETE FROM {$this->tablename}" . $this->get_where_sql( $q_keep_which );
+		return	"DELETE FROM {$this->tablename} " . $this->get_where_sql( $q_keep_which );
 	}
 
 	/**
@@ -195,7 +199,7 @@ class Model implements I_Model {
 	 * @return string   Returns the SQL query string
 	 */
 	protected function get_count_sql() {
-		return	"SELECT COUNT(*) FROM {$this->tablename}" . $this->get_where_sql( 'MIN' );
+		return	"SELECT COUNT(*) FROM {$this->tablename} " . $this->get_where_sql( 'MIN' );
 	}
 
 	/**
@@ -206,7 +210,10 @@ class Model implements I_Model {
 	 * @return string   Returns the SQL query string
 	 */
 	protected function get_duplicates_sql() {
-		return "SELECT * FROM {$this->tablename}" . $this->get_where_sql( 'MIN', ' ORDER BY meta_key;' );
+
+		$where_sql = $this->get_where_sql( 'MIN' );
+
+		return "SELECT * FROM {$this->tablename} " . $where_sql . ' ORDER BY meta_key;';
 	}
 
 	/**
@@ -217,18 +224,23 @@ class Model implements I_Model {
 	 * @param string    $q_keep_which   MIN retains the first duplicate record
 	 *                                  (discard all dups); MAX retains the last.
 	 *                                  Default: MAX
-	 * @param string    $suffix         Append the semi-colon to the end.
 	 * @return string                   Returns the WHERE SQL query string
 	 */
-	protected function get_where_sql( $q_keep_which = 'MAX', $suffix = ';' ) {
-		return " WHERE {$this->columns['primary_id']} NOT IN (
-					SELECT *
-					FROM (
-						SELECT {$q_keep_which}({$this->columns['primary_id']})
-						FROM {$this->tablename}
-						GROUP BY {$this->columns['id']}, meta_key
-					) AS x
-				){$suffix}";
+	protected function get_where_sql( $q_keep_which = 'MAX' ) {
+
+		return sprintf( 'WHERE %1$s NOT IN (
+				SELECT *
+				FROM (
+					SELECT %2$s(%1$s)
+					FROM %3$s
+					GROUP BY %4$s, meta_key
+				) AS x
+			)',
+			$this->columns['primary_id'],
+			'MIN' === $q_keep_which ? 'MIN' : 'MAX',
+			$this->tablename,
+			$this->columns['id']
+		);
 	}
 
 	/****************************

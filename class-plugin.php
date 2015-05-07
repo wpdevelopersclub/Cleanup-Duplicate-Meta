@@ -3,11 +3,12 @@
 /**
  * Cleanup Duplicate Meta Plugin Class
  *
- * This class is the controller for the plugin, directly traffic, creating the admin menu, etc.
+ * This class is the controller for the plugin, directly traffic, creating the
+ * admin menu, etc.
  *
  * @package     Cleanup_Dup_Meta
  * @since       1.0.1
- * @author      WP Developers Club and Tonya
+ * @author      WPDevelopersClub and hellofromTonya
  * @link        http://wpdevelopersclub.com/wordpress-plugins/cleanup-duplicate-meta/
  * @license     GNU General Public License 2.0+
  * @copyright   2015 WP Developers Club
@@ -90,19 +91,19 @@ class Plugin {
 	/**
 	 * Instantiate the plugin
 	 *
-	 * @since 1.0.0
+	 * @since 1.0.1
 	 *
 	 * @param array     $config     Configuration array
 	 * @param I_Model   $postmeta   Instance of post meta model
 	 * @param I_Model   $usermeta   Instance of user meta model
+	 * @param string    $capability User capability
 	 * @return self
 	 */
-	public function __construct( array $config, I_Model $postmeta, I_Model $usermeta ) {
-		$this->config   = $config;
-		$this->postmeta = $postmeta;
-		$this->usermeta = $usermeta;
-
-		$this->capability = apply_filters( 'cleanup_duplicate_meta_capability', 'manage_options' );
+	public function __construct( array $config, I_Model $postmeta, I_Model $usermeta, $capability ) {
+		$this->config       = $config;
+		$this->postmeta     = $postmeta;
+		$this->usermeta     = $usermeta;
+		$this->capability   = $capability;
 
 		$this->init_hooks();
 	}
@@ -112,7 +113,7 @@ class Plugin {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return void
+	 * @return null
 	 */
 	protected function init_hooks() {
 
@@ -128,7 +129,7 @@ class Plugin {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function add_menu_menu() {
 		$this->menu_id = add_management_page(
@@ -136,7 +137,8 @@ class Plugin {
 			__( 'Cleanup Duplicates', 'cleanup_dup_meta' ),
 			$this->capability,
 			'cleanup_dup_meta',
-			array( $this, 'render_menu_page' ) );
+			array( $this, 'render_menu_page' )
+		);
 	}
 
 	/**
@@ -145,11 +147,11 @@ class Plugin {
 	 * @since 1.0.0
 	 *
 	 * @param string    $hook       Current page
-	 * @return void
+	 * @return null
 	 */
 	public function enqueue_scripts( $hook ) {
 
-		if ( 'tools_page_cleanup_dup_meta' != $hook ) {
+		if ( 'tools_page_cleanup_dup_meta' !== $hook ) {
 			return;
 		}
 
@@ -170,7 +172,7 @@ class Plugin {
 
 		// Pass some parameters to javascript
 		$params = array(
-			'ajaxurl'   => admin_url('admin-ajax.php'),
+			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 		);
 		wp_localize_script( 'cleanup_dup_meta_js', 'cleanup_dup_meta_params', $params );
 	}
@@ -180,11 +182,11 @@ class Plugin {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function render_menu_page() {
-		global $wpdb;
 
+		/** @noinspection PhpIncludeInspection */
 		include( $this->config['view'] );
 
 		$this->postmeta->render();
@@ -196,9 +198,13 @@ class Plugin {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function load_textdomain() {
-		load_plugin_textdomain( 'cleanup_dup_meta', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+		load_plugin_textdomain(
+			'cleanup_dup_meta',
+			false,
+			dirname( plugin_basename( __FILE__ ) ) . '/languages'
+		);
 	}
 }

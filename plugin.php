@@ -1,18 +1,24 @@
 <?php namespace Cleanup_Dup_Meta;
 
 /**
+ * Cleanup Duplicate Meta
+ *
  * @package     Cleanup_Dup_Meta
- * @license     GNU General Public License 2.0+
+ * @author      WPDevelopersClub and hellofromTonya
+ * @license     GPL-2.0+
+ * @link        http://wpdevelopersclub.com/wordpress-plugins/cleanup-duplicate-meta/
  * @copyright   2015 WP Developers Club
- */
-
-/**
- * Plugin Name: Cleanup Duplicate Meta
- * Plugin URI:  http://wpdevelopersclub.com/wordpress-plugins/cleanup-duplicate-meta/
- * Description: Checks for and deletes duplicate Post and/or User Meta entries in the database tables
- * Version:     1.0.1
- * Author:      WP Developers Club and Tonya
- * Author URI:  http://wpdevelopersclub.com
+ *
+ * @wordpress-plugin
+ * Plugin Name:     Cleanup Duplicate Meta
+ * Plugin URI:      http://wpdevelopersclub.com/wordpress-plugins/cleanup-duplicate-meta/
+ * Description:     Checks for and deletes duplicate Post and/or User Meta entries in the database tables
+ * Version:         1.0.1
+ * Author:          WP Developers Club and Tonya
+ * Author URI:      http://wpdevelopersclub.com
+ * Text Domain:     cleanup_dup_meta
+ * Requires WP:     3.3
+ * Requires PHP:    5.3
  */
 
 /*
@@ -52,14 +58,23 @@ if ( version_compare( $GLOBALS['wp_version'], Plugin::MIN_WP_VERSION, '>' ) ) {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return void
+	 * @return null
 	 */
 	function launch() {
 
+		$capability = apply_filters( 'cleanup_duplicate_meta_capability', 'manage_options' );
+
+		// Bail out if not in the admin backend or user does not have capability
+		if ( ! is_admin() || ! current_user_can( $capability ) ) {
+			return;
+		}
+
+		/** @noinspection PhpIncludeInspection */
 		new Plugin(
 			include( CLEANUP_DUP_META_PLUGIN_DIR . 'lib/config/plugin.php' ),
 			new Model( include( CLEANUP_DUP_META_PLUGIN_DIR . 'lib/config/postmeta.php' ) ),
-			new Model( include( CLEANUP_DUP_META_PLUGIN_DIR . 'lib/config/usermeta.php' ) )
+			new Model( include( CLEANUP_DUP_META_PLUGIN_DIR . 'lib/config/usermeta.php' ) ),
+			$capability
 		);
 	}
 }
